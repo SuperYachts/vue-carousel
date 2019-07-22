@@ -5,6 +5,7 @@
             'margin-right': `-${ halfMargin }px`,
             'margin-left': `-${ halfMargin }px`,
         }"
+        class="efficient-carousel-container"
     >
         <translate-scroll
             :value="translateScroll"
@@ -17,9 +18,7 @@
                 @resize="setClientWidth"
             />
 
-            <div
-                class="efficient-carousel"
-            >
+            <div class="efficient-carousel">
                 <div
                     v-for="{ item, index } in itemsRendered"
                     :key="index"
@@ -109,6 +108,7 @@
              * @returns {Number}
              */
             itemWidth() {
+                console.log('itemWidth', this.clientWidth / this.numberInView);
                 return this.clientWidth / this.numberInView;
             },
 
@@ -259,7 +259,9 @@
              * Set the client width
              */
             setClientWidth() {
-                this.clientWidth = this.$el.getBoundingClientRect().width;
+                this.clientWidth = this.$el && this.$el.getBoundingClientRect
+                    ? this.$el.getBoundingClientRect().width
+                    : 1;
             },
 
             /**
@@ -367,12 +369,18 @@
 </script>
 
 <style lang="scss">
-    .efficient-carousel {
-        display: flex;
-        width: 100%;
+    .efficient-carousel-container {
+        box-sizing: border-box;
 
-        .efficient-carousel-item {
-            flex-shrink: 0;
+        .efficient-carousel {
+            display: flex;
+            width: 100%;
+            box-sizing: border-box;
+
+            .efficient-carousel-item {
+                flex-shrink: 0;
+                box-sizing: border-box;
+            }
         }
     }
 </style>
