@@ -8,8 +8,7 @@
     .test-container {
         border: 1px solid blue;
         background: rgba(0, 0, 0, 0.1);
-        overflow: hidden;
         max-width: 500px;
-        padding: 20px;
+        padding: 10px;
     }
 </style>

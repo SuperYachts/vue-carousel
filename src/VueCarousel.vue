@@ -108,7 +108,6 @@
              * @returns {Number}
              */
             itemWidth() {
-                console.log('itemWidth', this.clientWidth / this.numberInView);
                 return this.clientWidth / this.numberInView;
             },
 

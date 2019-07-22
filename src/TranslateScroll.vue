@@ -11,13 +11,10 @@
         @mouseup="stopPanning"
         @mousemove="handlePanning"
     >
-        <global-events
-            target="window"
-            @resize="setClientWidth"
-        />
-
         <div
-            ref="scrollPosition"
+            :style="{
+                transform: translateX,
+            }"
             class="translate-scroll-position"
         >
             <slot />
@@ -53,7 +50,6 @@
                 panning: false,
                 initialTouchPosition: null,
                 initialScroll: null,
-                clientWidth: 1,
             };
         },
 
@@ -68,44 +64,7 @@
             },
         },
 
-        watch: {
-            value: {
-                immediate: true,
-                /**
-                 * Improve efficiency of site by updating the scroll position in
-                 * raw JS instead of using Vue and having the virtual DOM diffed
-                 * in N different places multiple times per second
-                 */
-                handler() {
-                    if (!this.$refs.scrollPosition) {
-                        return;
-                    }
-
-                    this.$refs.scrollPosition.style.setProperty('transform', this.translateX);
-                },
-            },
-        },
-
-        async mounted() {
-            await this.$nextTick();
-
-            this.setClientWidth();
-        },
-
-        async updated() {
-            await this.$nextTick();
-
-            this.setClientWidth();
-        },
-
         methods: {
-            /**
-             * Set the client width
-             */
-            setClientWidth() {
-                this.clientWidth = this.$el.getBoundingClientRect().width;
-            },
-
             /**
              * Start handling panning
              *
