@@ -16,13 +16,18 @@ storiesOf('VueCarousel', module)
         },
 
         template: `
-            <test-container>
-                <vue-carousel :items="items">
-                    <template v-slot="{ item }">
-                        <test-item>{{ item }}</test-item>
-                    </template>
-                </vue-carousel>
-            </test-container>
+            <div>
+                <button @click="$refs.carousel.move(-1)">Previous</button>
+                <button @click="$refs.carousel.move(1)">Next</button>
+
+                <test-container>
+                    <vue-carousel ref="carousel" :items="items">
+                        <template v-slot="{ item }">
+                            <test-item>{{ item }}</test-item>
+                        </template>
+                    </vue-carousel>
+                </test-container>
+            </div>
         `,
 
         methods: {
