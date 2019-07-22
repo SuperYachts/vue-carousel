@@ -6,6 +6,7 @@
                 transitionDuration,
                 transitionTimingFunction,
             }"
+            @transitionend="$emit('transitionend')"
             class="translate-scroll-position"
         >
             <slot />

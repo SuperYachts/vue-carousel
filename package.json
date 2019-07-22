@@ -76,7 +76,6 @@
   "main": "dist/index.common.js",
   "unpkg": "dist/index.umd.min.js",
   "dependencies": {
-    "@netsells/vue-set-timeout": "^0.1.4",
     "vue-global-events": "^1.1.2"
   }
 }

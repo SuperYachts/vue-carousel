@@ -9,9 +9,8 @@
     >
         <translate-scroll
             :value="translateScroll"
-            @panning-start="handlePanningStart"
-            @panning="handlePanning"
-            @panning-stop="handlePanningStop"
+            :transition-duration="transitioning ? '0.5s' : '0s'"
+            @transitionend="handleTransitionEnd"
         >
             <global-events
                 target="window"
@@ -37,7 +36,6 @@
 </template>
 
 <script>
-    import VueSetTimeout from '@netsells/vue-set-timeout';
     import GlobalEvents from 'vue-global-events';
 
     import TranslateScroll from './TranslateScroll';
@@ -49,10 +47,6 @@
             GlobalEvents,
             TranslateScroll,
         },
-
-        mixins: [
-            VueSetTimeout,
-        ],
 
         props: {
             items: {
@@ -94,10 +88,9 @@
         data() {
             return {
                 scroll: 0,
-                initialScroll: null,
+                translateScroll: 0,
+                transitioning: false,
                 clientWidth: 1,
-                transitionTimer: null,
-                transitioningTo: null,
             };
         },
 
@@ -136,7 +129,8 @@
                  * @param {Number} value
                  */
                 set(value) {
-                    this.transitionIndex(value);
+                    this.itemScroll = this.totalWidth * (value / this.itemCount);
+                    this.$emit('index', this.index);
                 },
             },
 
@@ -220,21 +214,6 @@
                     this.scroll = -value;
                 },
             },
-
-            /**
-             * Scroll adjusted for the translate
-             *
-             * @returns {Number}
-             */
-            translateScroll() {
-                let scroll = ((this.scroll % this.itemWidth) + this.itemWidth) % this.itemWidth;
-
-                if (this.center) {
-                    scroll -= (this.clientWidth / 2) - (this.itemWidth / 2);
-                }
-
-                return scroll - this.itemWidth;
-            },
         },
 
         async mounted() {
@@ -253,7 +232,54 @@
             this.setClientWidth();
         },
 
+        watch: {
+            /**
+             * Scroll adjusted for the translate
+             */
+            scroll(to, from) {
+                this.runScrollTransition(to, from);
+            },
+
+            /**
+             * Scroll adjusted for the translate
+             */
+            itemWidth() {
+                this.translateScroll = this.getTranslateScroll();
+            },
+        },
+
         methods: {
+            getTranslateScroll() {
+                let scroll = ((Math.round(this.scroll) % this.itemWidth) + this.itemWidth) % this.itemWidth;
+
+                if (this.center) {
+                    scroll -= (this.clientWidth / 2) - (this.itemWidth / 2);
+                }
+
+                return scroll - this.itemWidth;
+            },
+
+            async runScrollTransition(rawFrom, rawTo) {
+                const from = this.translateScroll;
+                const to = this.getTranslateScroll();
+
+                const startFrom = rawTo > rawFrom
+                    ? to + this.itemWidth
+                    : to - this.itemWidth;
+
+                this.transitioning = false;
+                this.translateScroll = startFrom;
+
+                await this.$nextTick();
+
+                this.transitioning = true;
+                this.translateScroll = to;
+            },
+
+            handleTransitionEnd() {
+                this.transitioning = false;
+            },
+
             /**
              * Set the client width
              */
@@ -281,87 +307,6 @@
              */
             getItemIndex(index) {
                 return ((index % this.itemCount) + this.itemCount) % this.itemCount;
-            },
-
-            /**
-             * Sleep for a certain amount of time between the transition points
-             *
-             * @param {Number} timeout
-             *
-             * @returns {Promise<undefined>}
-             */
-            async animationSleep(timeout = this.animationStep) {
-                return new Promise(resolve => {
-                    this.clearTimeout(this.transitionTimer);
-
-                    this.transitionTimer = this.setTimeout(resolve, timeout);
-                });
-            },
-
-            /**
-             * Transition smoothly to the index
-             *
-             * @param {Number} index
-             */
-            async transitionIndex(index) {
-                // Stagger transitions on different parts of the page to make them smoother
-                await this.animationSleep(Math.random() * this.animationStep);
-
-                if (this.transitioningTo !== null) {
-                    // Abruptly finish previous transition
-                    this.itemScroll = this.transitioningTo;
-                }
-
-                this.transitioningTo = this.totalWidth * (index / this.itemCount);
-
-                while (this.itemScroll !== this.transitioningTo) {
-                    if (this.panning) {
-                        break;
-                    }
-
-                    const distance = (this.transitioningTo - this.itemScroll) / 2;
-
-                    if (Math.abs(distance) < 1) {
-                        this.itemScroll = this.transitioningTo;
-                        break;
-                    }
-
-                    this.itemScroll += distance > 0
-                        ? Math.min(this.animationSpeed, distance)
-                        : Math.max(-this.animationSpeed, distance);
-
-                    await this.animationSleep();
-                }
-
-                this.transitioningTo = null;
-                this.$emit('index', this.index);
-            },
-
-            /**
-             * Handle panning starte
-             */
-            handlePanningStart() {
-                this.initialScroll = this.scroll;
-            },
-
-            /**
-             * Stop handling panning
-             */
-            handlePanningStop() {
-                const closestIndex = Math.round(this.rawIndex);
-
-                if (this.rawIndex !== closestIndex) {
-                    this.rawIndex = closestIndex;
-                }
-            },
-
-            /**
-             * Handle panning update
-             *
-             * @param {Object} pan
-             */
-            handlePanning({ distance }) {
-                this.scroll = this.initialScroll + distance;
             },
         },
     };
