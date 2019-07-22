@@ -31,7 +31,7 @@
 
             transitionTimingFunction: {
                 type: String,
-                default: 'linear',
+                default: 'ease',
             },
         },
 

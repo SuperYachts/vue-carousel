@@ -5,7 +5,16 @@
             'margin-right': `-${ halfMargin }px`,
             'margin-left': `-${ halfMargin }px`,
         }"
+        :class="{ panning }"
         class="efficient-carousel-container"
+        @touchstart="startPanning"
+        @touchend="stopPanning"
+        @touchcancel="stopPanning"
+        @touchmove="handlePanning"
+        @mousedown="startPanning"
+        @mouseleave="stopPanning"
+        @mouseup="stopPanning"
+        @mousemove="handlePanning"
     >
         <translate-scroll
             :value="translateScroll"
@@ -91,6 +100,11 @@
                 translateScroll: 0,
                 transitioning: false,
                 clientWidth: 1,
+                mousedown: false,
+                panning: false,
+                initialTouchPosition: null,
+                initialScroll: null,
+                goingToNearest: false,
             };
         },
 
@@ -150,7 +164,7 @@
                  * @param {Number} value
                  */
                 set(value) {
-                    this.rawIndex = value + (Math.floor(this.rawIndex / this.itemCount) * this.itemCount);
+                    this.rawIndex = value;
                 },
             },
 
@@ -260,9 +274,18 @@
             },
 
             async runScrollTransition(rawFrom, rawTo) {
-                const from = this.translateScroll;
+                if (this.goingToNearest) {
+                    return;
+                }
+
                 const to = this.getTranslateScroll();
 
+                if (this.panning) {
+                    this.translateScroll = to;
+                    return;
+                }
+
+                const from = this.translateScroll;
                 const startFrom = rawTo > rawFrom
                     ? to + this.itemWidth
                     : to - this.itemWidth;
@@ -276,8 +299,26 @@
                 this.translateScroll = to;
             },
 
+            async transitionToNearest() {
+                if (this.index !== this.rawIndex) {
+                    const oldRawIndex = this.rawIndex;
+
+                    this.goingToNearest = true;
+                    this.index = Math.round(this.rawIndex);
+
+                    if (oldRawIndex > this.rawIndex) {
+                        this.translateScroll -= this.itemWidth;
+                        await this.$nextTick();
+                    }
+
+                    this.transitioning = true;
+                    this.translateScroll = this.getTranslateScroll();
+                }
+            },
+
             handleTransitionEnd() {
                 this.transitioning = false;
+                this.goingToNearest = false;
             },
 
             /**
@@ -308,6 +349,55 @@
             getItemIndex(index) {
                 return ((index % this.itemCount) + this.itemCount) % this.itemCount;
             },
+
+            /**
+             * Start handling panning
+             *
+             * @param {Event} e
+             */
+            startPanning(e) {
+                this.initialTouchPosition = e.clientX || e.touches[0].clientX;
+                this.initialScroll = this.itemScroll;
+                this.mousedown = true;
+            },
+
+            /**
+             * Stop handling panning
+             *
+             * @param {Event} e
+             */
+            stopPanning(e) {
+                if (!this.panning) {
+                    return;
+                }
+
+                if (this.itemScroll !== this.initialScroll) {
+                    e.preventDefault();
+                }
+
+                this.panning = false;
+                this.mousedown = false;
+
+                this.transitionToNearest();
+            },
+
+            /**
+             * Move the scroll position based on the distance the touch event
+             * moved
+             *
+             * @param {Event} event
+             */
+            handlePanning({ clientX, touches }) {
+                if (!this.mousedown) {
+                    return;
+                }
+
+                this.panning = true;
+
+                const currentTouchPosition = clientX || touches[0].clientX;
+                const distance = currentTouchPosition - this.initialTouchPosition;
+                this.itemScroll = this.initialScroll - distance;
+            },
         },
     };
 </script>
@@ -315,6 +405,14 @@
 <style lang="scss">
     .efficient-carousel-container {
         box-sizing: border-box;
+
+        &.panning {
+            cursor: ew-resize;
+
+            > * {
+                pointer-events: none;
+            }
+        }
 
         .efficient-carousel {
             display: flex;
