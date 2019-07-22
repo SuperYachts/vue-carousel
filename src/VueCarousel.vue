@@ -73,16 +73,6 @@
                 default: 20,
             },
 
-            animationStep: {
-                type: Number,
-                default: 10,
-            },
-
-            animationSpeed: {
-                type: Number,
-                default: 20,
-            },
-
             center: {
                 type: Boolean,
                 default: false,
