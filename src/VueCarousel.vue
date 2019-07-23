@@ -187,9 +187,8 @@
              */
             itemsRendered() {
                 const items = [];
-                const padding = Math.ceil(this.numberInView / 2);
-                const start = this.index - padding;
-                const end = this.index + padding;
+                const start = this.index - 1;
+                const end = this.index + this.numberInView;
 
                 for (let i = start; i <= end; i++) {
                     const index = this.getItemIndex(i);
