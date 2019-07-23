@@ -154,7 +154,7 @@
                  * @param {Number} value
                  */
                 set(value) {
-                    this.rawIndex = value;
+                    this.rawIndex = value + (Math.floor(this.rawIndex / this.itemCount) * this.itemCount);
                 },
             },
 
