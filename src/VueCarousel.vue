@@ -109,7 +109,7 @@
              * @returns {Number}
              */
             itemWidth() {
-                return this.clientWidth / this.numberInView;
+                return Math.round(this.clientWidth / this.numberInView);
             },
 
             /**
@@ -223,22 +223,6 @@
             },
         },
 
-        async mounted() {
-            await this.$nextTick();
-
-            this.setClientWidth();
-
-            if (!this.index) {
-                this.index = this.startPosition;
-            }
-        },
-
-        async updated() {
-            await this.$nextTick();
-
-            this.setClientWidth();
-        },
-
         watch: {
             /**
              * Scroll adjusted for the translate
@@ -253,6 +237,22 @@
             itemWidth() {
                 this.translateScroll = this.getTranslateScroll();
             },
+        },
+
+        async mounted() {
+            await this.$nextTick();
+
+            this.setClientWidth();
+
+            if (!this.index) {
+                this.index = this.startPosition;
+            }
+        },
+
+        async updated() {
+            await this.$nextTick();
+
+            this.setClientWidth();
         },
 
         methods: {
@@ -278,7 +278,6 @@
                     return;
                 }
 
-                const from = this.translateScroll;
                 const startFrom = rawTo > rawFrom
                     ? to + this.itemWidth
                     : to - this.itemWidth;
@@ -319,7 +318,7 @@
              */
             setClientWidth() {
                 this.clientWidth = this.$el && this.$el.getBoundingClientRect
-                    ? this.$el.getBoundingClientRect().width
+                    ? Math.round(this.$el.getBoundingClientRect().width)
                     : 1;
             },
 
