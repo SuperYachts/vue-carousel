@@ -2,7 +2,7 @@
 
 import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
-import { withKnobs, number } from '@storybook/addon-knobs';
+import { withKnobs, number, boolean } from '@storybook/addon-knobs';
 
 import VueCarousel from '../src/VueCarousel';
 import TestItem from '../src/TestItem';
@@ -27,6 +27,7 @@ storiesOf('VueCarousel', module)
                         ref="carousel"
                         :items="items"
                         :number-in-view="numberInView"
+                        :center="center"
                     >
                         <template v-slot="{ item }">
                             <test-item>{{ item }}</test-item>
@@ -51,6 +52,11 @@ storiesOf('VueCarousel', module)
             numberInView: {
                 type: Number,
                 default: number('Number in view', 1),
+            },
+
+            center: {
+                type: Boolean,
+                default: boolean('Center', false),
             },
         },
     }));
