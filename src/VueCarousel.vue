@@ -49,6 +49,14 @@
 
     import TranslateScroll from './TranslateScroll';
 
+    /**
+     * Modulus between 0 and MAX, not -MAX and MAX
+     *
+     * @param {Number} a
+     * @param {Number} b
+     *
+     * @returns {Number}
+     */
     function modulus(a, b) {
         return ((a % b) + b) % b;
     }
@@ -226,6 +234,9 @@
         watch: {
             /**
              * Scroll adjusted for the translate
+             *
+             * @param {Number} to
+             * @param {Number} from
              */
             scroll(to, from) {
                 this.runScrollTransition(to, from);
@@ -256,6 +267,11 @@
         },
 
         methods: {
+            /**
+             * Get scroll location for the translate
+             *
+             * @returns {Number}
+             */
             getTranslateScroll() {
                 let scroll = modulus(Math.round(this.scroll), this.itemWidth);
 
@@ -266,6 +282,12 @@
                 return scroll - this.itemWidth;
             },
 
+            /**
+             * Run the translate scroll CSS animation
+             *
+             * @param {Number} rawFrom
+             * @param {Number} rawTo
+             */
             async runScrollTransition(rawFrom, rawTo) {
                 if (this.goingToNearest) {
                     return;
@@ -291,6 +313,9 @@
                 this.translateScroll = to;
             },
 
+            /**
+             * Transition to the nearest index
+             */
             async transitionToNearest() {
                 if (this.index !== this.rawIndex) {
                     const oldRawIndex = this.rawIndex;
@@ -308,6 +333,9 @@
                 }
             },
 
+            /**
+             * Finish the CSS transition
+             */
             handleTransitionEnd() {
                 this.transitioning = false;
                 this.goingToNearest = false;
