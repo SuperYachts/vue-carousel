@@ -386,6 +386,7 @@
                 }
 
                 this.panning = true;
+                this.transitioning = false;
 
                 const currentTouchPosition = clientX || touches[0].clientX;
                 const distance = currentTouchPosition - this.initialTouchPosition;
