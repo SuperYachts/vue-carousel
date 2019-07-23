@@ -191,7 +191,7 @@
             itemsRendered() {
                 const items = [];
                 const padding = 1;
-                const start = this.index - padding;
+                const start = this.index - padding - (this.center ? 1 : 0);
                 const end = start + this.numberInView + padding + (this.center ? 1 : 0);
 
                 for (let i = start; i <= end; i++) {
@@ -269,7 +269,7 @@
                 let scroll = modulus(Math.round(this.scroll), this.itemWidth);
 
                 if (this.center) {
-                    scroll -= this.itemWidth / 2;
+                    scroll -= (this.clientWidth / 2) - this.itemWidth / 2;
                 }
 
                 return scroll - this.itemWidth;
