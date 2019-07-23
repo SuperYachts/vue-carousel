@@ -85,7 +85,7 @@
                 default: false,
             },
 
-            startPosition: {
+            value: {
                 type: Number,
                 default: 0,
             },
@@ -244,14 +244,19 @@
             itemWidth() {
                 this.translateScroll = this.getTranslateScroll();
             },
-        },
 
-        async mounted() {
-            await this.$nextTick();
+            /**
+             * Change index based on value
+             *
+             * @param {Number} index
+             */
+            async value(index) {
+                if (index < 0) {
+                    return;
+                }
 
-            if (!this.index) {
-                this.index = this.startPosition;
-            }
+                this.index = index;
+            },
         },
 
         methods: {
@@ -327,6 +332,7 @@
             handleTransitionEnd() {
                 this.transitioning = false;
                 this.goingToNearest = false;
+                this.$emit('input', this.index);
             },
 
             /**

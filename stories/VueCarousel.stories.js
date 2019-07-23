@@ -28,6 +28,8 @@ storiesOf('VueCarousel', module)
                         :items="items"
                         :number-in-view="numberInView"
                         :center="center"
+                        :value="value"
+                        @input="input"
                     >
                         <template v-slot="{ item }">
                             <test-item>{{ item }}</test-item>
@@ -38,10 +40,15 @@ storiesOf('VueCarousel', module)
         `,
 
         methods: {
-            action: action('clicked'),
+            input: action('input'),
         },
 
         props: {
+            value: {
+                type: Number,
+                default: number('Value', 0),
+            },
+
             items: {
                 type: Array,
                 default() {
