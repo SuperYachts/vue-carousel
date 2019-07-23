@@ -1,11 +1,12 @@
 <template>
-    <div
+    <element-width
         :style="{
             width: `calc(100% + ${ margin }px)`,
             'margin-right': `-${ halfMargin }px`,
             'margin-left': `-${ halfMargin }px`,
         }"
         :class="{ panning }"
+        v-model="clientWidth"
         class="efficient-carousel-container"
         @touchstart="startPanning"
         @touchend="stopPanning"
@@ -21,11 +22,6 @@
             :transition-duration="transitioning ? '0.5s' : '0s'"
             @transitionend="handleTransitionEnd"
         >
-            <global-events
-                target="window"
-                @resize="setClientWidth"
-            />
-
             <div class="efficient-carousel">
                 <div
                     v-for="{ item, index } in itemsRendered"
@@ -41,13 +37,12 @@
                 </div>
             </div>
         </translate-scroll>
-    </div>
+    </element-width>
 </template>
 
 <script>
-    import GlobalEvents from 'vue-global-events';
-
     import TranslateScroll from './TranslateScroll';
+    import ElementWidth from './ElementWidth';
 
     /**
      * Modulus between 0 and MAX, not -MAX and MAX
@@ -65,7 +60,7 @@
         name: 'vue-carousel',
 
         components: {
-            GlobalEvents,
+            ElementWidth,
             TranslateScroll,
         },
 
@@ -253,17 +248,9 @@
         async mounted() {
             await this.$nextTick();
 
-            this.setClientWidth();
-
             if (!this.index) {
                 this.index = this.startPosition;
             }
-        },
-
-        async updated() {
-            await this.$nextTick();
-
-            this.setClientWidth();
         },
 
         methods: {
@@ -339,15 +326,6 @@
             handleTransitionEnd() {
                 this.transitioning = false;
                 this.goingToNearest = false;
-            },
-
-            /**
-             * Set the client width
-             */
-            setClientWidth() {
-                this.clientWidth = this.$el && this.$el.getBoundingClientRect
-                    ? Math.round(this.$el.getBoundingClientRect().width)
-                    : 1;
             },
 
             /**
