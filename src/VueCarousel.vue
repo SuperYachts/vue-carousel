@@ -49,6 +49,10 @@
 
     import TranslateScroll from './TranslateScroll';
 
+    function modulus(a, b) {
+        return ((a % b) + b) % b;
+    }
+
     export default {
         name: 'efficient-carousel',
 
@@ -145,7 +149,7 @@
                  * @returns {Number}
                  */
                 get() {
-                    return ((Math.ceil(this.rawIndex) % this.itemCount) + this.itemCount) % this.itemCount;
+                    return modulus(Math.ceil(this.rawIndex), this.itemCount);
                 },
 
                 /**
@@ -254,7 +258,7 @@
 
         methods: {
             getTranslateScroll() {
-                let scroll = ((Math.round(this.scroll) % this.itemWidth) + this.itemWidth) % this.itemWidth;
+                let scroll = modulus(Math.round(this.scroll), this.itemWidth);
 
                 if (this.center) {
                     scroll -= (this.clientWidth / 2) - (this.itemWidth / 2);
@@ -294,7 +298,7 @@
                     const oldRawIndex = this.rawIndex;
 
                     this.goingToNearest = true;
-                    this.index = Math.round(this.rawIndex);
+                    this.index = Math.round(this.getItemIndex(this.rawIndex));
 
                     if (oldRawIndex > this.rawIndex) {
                         this.translateScroll -= this.itemWidth;
@@ -337,7 +341,7 @@
              * @returns {Number}
              */
             getItemIndex(index) {
-                return ((index % this.itemCount) + this.itemCount) % this.itemCount;
+                return modulus(index, this.itemCount);
             },
 
             /**
