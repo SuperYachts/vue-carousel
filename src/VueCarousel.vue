@@ -183,6 +183,23 @@
                 return this.items.length;
             },
 
+            startEnd() {
+                const padding = 1;
+
+                if (this.center) {
+                    const centerPadding = padding + Math.ceil(this.numberInView / 2);
+                    const start = this.index - centerPadding;
+                    const end = this.index + centerPadding;
+
+                    return { start, end };
+                }
+
+                const start = this.index - padding;
+                const end = start + this.numberInView + padding;
+
+                return { start, end };
+            },
+
             /**
              * Which items to render in the DOM
              *
@@ -190,9 +207,7 @@
              */
             itemsRendered() {
                 const items = [];
-                const padding = 1;
-                const start = this.index - padding - (this.center ? 1 : 0);
-                const end = start + this.numberInView + padding + (this.center ? 1 : 0);
+                const { start, end } = this.startEnd;
 
                 for (let i = start; i <= end; i++) {
                     const index = this.getItemIndex(i);
@@ -269,7 +284,9 @@
                 let scroll = modulus(Math.round(this.scroll), this.itemWidth);
 
                 if (this.center) {
-                    scroll -= (this.clientWidth / 2) - this.itemWidth / 2;
+                    scroll -= this.numberInView % 2 === 0
+                        ? this.itemWidth / 2
+                        : this.itemWidth;
                 }
 
                 return scroll - this.itemWidth;
