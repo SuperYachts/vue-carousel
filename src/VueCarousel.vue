@@ -183,6 +183,11 @@
                 return this.items.length;
             },
 
+            /**
+             * Get start and end of render items
+             *
+             * @returns {{ start: Number, end: Number }}
+             */
             startEnd() {
                 const padding = 1;
 
