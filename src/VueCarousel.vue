@@ -62,7 +62,7 @@
     }
 
     export default {
-        name: 'efficient-carousel',
+        name: 'vue-carousel',
 
         components: {
             GlobalEvents,
