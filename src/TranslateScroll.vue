@@ -1,12 +1,12 @@
-<template>
+<template functional>
     <div class="translate-scroll">
         <div
             :style="{
-                transform: translateX,
-                transitionDuration,
-                transitionTimingFunction,
+                transform: `translateX(${ props.value }px)`,
+                transitionDuration: props.transitionDuration,
+                transitionTimingFunction: props.transitionTimingFunction,
             }"
-            @transitionend="$emit('transitionend')"
+            @transitionend="listeners.transitionend"
             class="translate-scroll-position"
         >
             <slot />
@@ -32,17 +32,6 @@
             transitionTimingFunction: {
                 type: String,
                 default: 'ease',
-            },
-        },
-
-        computed: {
-            /**
-             * The translateX style
-             *
-             * @returns {Number}
-             */
-            translateX() {
-                return `translateX(${ this.value }px)`;
             },
         },
     };

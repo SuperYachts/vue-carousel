@@ -97,11 +97,7 @@
                 translateScroll: 0,
                 transitioning: false,
                 clientWidth: 1,
-                mousedown: false,
                 panning: false,
-                initialTouchPosition: null,
-                initialScroll: null,
-                goingToNearest: false,
             };
         },
 
@@ -277,6 +273,13 @@
 
                 this.index = index;
             },
+        },
+
+        created() {
+            this.goingToNearest = false;
+            this.initialScroll = null;
+            this.initialTouchPosition = null;
+            this.mousedown = false;
         },
 
         methods: {
