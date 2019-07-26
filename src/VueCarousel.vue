@@ -89,6 +89,21 @@
                 type: Number,
                 default: 0,
             },
+
+            panningMinimumX: {
+                type: Number,
+                default: 8,
+            },
+
+            panningMaximumY: {
+                type: Number,
+                default: 200,
+            },
+
+            panningRatio: {
+                type: Number,
+                default: 2,
+            },
         },
 
         data() {
@@ -381,12 +396,24 @@
             },
 
             /**
+             * Get the touch position of an event
+             *
+             * @param {Event} e
+             */
+            getTouchPosition(e) {
+                return {
+                    x: e.clientX || e.touches[0].clientX,
+                    y: e.clientY || e.touches[0].clientY,
+                };
+            },
+
+            /**
              * Start handling panning
              *
              * @param {Event} e
              */
             startPanning(e) {
-                this.initialTouchPosition = e.clientX || e.touches[0].clientX;
+                this.initialTouchPosition = this.getTouchPosition(e);
                 this.initialScroll = this.itemScroll;
                 this.mousedown = true;
             },
@@ -417,17 +444,37 @@
              *
              * @param {Event} event
              */
-            handlePanning({ clientX, touches }) {
+            handlePanning(e) {
                 if (!this.mousedown) {
                     return;
                 }
 
+                const currentTouchPosition = this.getTouchPosition(e);
+                const distanceX = currentTouchPosition.x - this.initialTouchPosition.x;
+
+                if (!this.panning) {
+                    const distanceXAbs = Math.abs(distanceX);
+                    const distanceYAbs = Math.abs(currentTouchPosition.y - this.initialTouchPosition.y);
+
+                    // Not enough movement overall
+                    if (distanceXAbs < this.panningMinimumX) {
+                        return;
+                    }
+
+                    // Too much vertical, must be trying to scroll
+                    if (distanceYAbs > this.panningMaximumY) {
+                        return;
+                    }
+
+                    // Not enough horizontal vs vertical movement
+                    if (distanceXAbs < (distanceYAbs * this.panningRatio)) {
+                        return;
+                    }
+                }
+
                 this.panning = true;
                 this.transitioning = false;
-
-                const currentTouchPosition = clientX || touches[0].clientX;
-                const distance = currentTouchPosition - this.initialTouchPosition;
-                this.itemScroll = this.initialScroll - distance;
+                this.itemScroll = this.initialScroll - distanceX;
             },
         },
     };

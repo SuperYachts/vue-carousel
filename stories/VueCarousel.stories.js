@@ -18,7 +18,7 @@ storiesOf('VueCarousel', module)
         },
 
         template: `
-            <div>
+            <div style="height: 200vh;">
                 <button @click="$refs.carousel.move(-1)">Previous</button>
                 <button @click="$refs.carousel.move(1)">Next</button>
 
@@ -32,7 +32,7 @@ storiesOf('VueCarousel', module)
                         @input="input"
                     >
                         <template v-slot="{ item }">
-                            <test-item>{{ item }}</test-item>
+                            <test-item @click.native="click(item)">{{ item }}</test-item>
                         </template>
                     </vue-carousel>
                 </test-container>
@@ -41,6 +41,7 @@ storiesOf('VueCarousel', module)
 
         methods: {
             input: action('input'),
+            click: action('click'),
         },
 
         props: {
