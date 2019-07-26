@@ -424,6 +424,8 @@
              * @param {Event} e
              */
             stopPanning(e) {
+                this.mousedown = false;
+
                 if (!this.panning) {
                     return;
                 }
@@ -433,7 +435,6 @@
                 }
 
                 this.panning = false;
-                this.mousedown = false;
 
                 this.transitionToNearest();
             },
