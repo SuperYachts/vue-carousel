@@ -196,7 +196,7 @@
              * @returns {Number}
              */
             surroundMargin() {
-                return this.halfMargin + this.marginError;
+                return this.halfMargin - this.marginError;
             },
 
             /**
