@@ -413,6 +413,8 @@
              * Get the touch position of an event
              *
              * @param {Event} e
+             *
+             * @returns {Object}
              */
             getTouchPosition(e) {
                 return {
@@ -457,7 +459,7 @@
              * Move the scroll position based on the distance the touch event
              * moved
              *
-             * @param {Event} event
+             * @param {Event} e
              */
             handlePanning(e) {
                 if (!this.mousedown) {
