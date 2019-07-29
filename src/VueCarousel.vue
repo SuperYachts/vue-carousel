@@ -2,8 +2,8 @@
     <element-width
         :style="{
             width: `calc(100% + ${ margin }px)`,
-            'margin-right': `-${ halfMargin }px`,
-            'margin-left': `-${ halfMargin }px`,
+            'margin-right': `-${ surroundMargin }px`,
+            'margin-left': `-${ surroundMargin }px`,
         }"
         :class="{ panning }"
         v-model="clientWidth"
@@ -104,6 +104,11 @@
                 type: Number,
                 default: 2,
             },
+
+            marginError: {
+                type: Number,
+                default: 0,
+            },
         },
 
         data() {
@@ -183,6 +188,15 @@
              */
             halfMargin() {
                 return this.margin / 2;
+            },
+
+            /**
+             * Half margin but 1 pixel bigger to prevent accidental overlap
+             *
+             * @returns {Number}
+             */
+            surroundMargin() {
+                return this.halfMargin + this.marginError;
             },
 
             /**
