@@ -8,6 +8,8 @@ import VueCarousel from '../src/VueCarousel';
 import TestItem from '../src/TestItem';
 import TestContainer from '../src/TestContainer';
 
+import image from './image.png';
+
 storiesOf('VueCarousel', module)
     .addDecorator(withKnobs)
     .add('test', () => ({
@@ -32,7 +34,11 @@ storiesOf('VueCarousel', module)
                         @input="input"
                     >
                         <template v-slot="{ item }">
-                            <test-item @click.native="click(item)">{{ item }}</test-item>
+                            <test-item @click.native="click(item)">
+                                {{ item }}
+
+                                <img :src="image" />
+                            </test-item>
                         </template>
                     </vue-carousel>
                 </test-container>
@@ -45,6 +51,11 @@ storiesOf('VueCarousel', module)
         },
 
         props: {
+            image: {
+                type: String,
+                default: image,
+            },
+
             value: {
                 type: Number,
                 default: number('Value', 0),

@@ -12,7 +12,7 @@
         @touchend="stopPanning"
         @touchcancel="stopPanning"
         @touchmove="handlePanning"
-        @mousedown="startPanning"
+        @mousedown.prevent="startPanning"
         @mouseleave="stopPanning"
         @mouseup="stopPanning"
         @mousemove="handlePanning"
