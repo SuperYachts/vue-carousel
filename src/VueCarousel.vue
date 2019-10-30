@@ -33,7 +33,11 @@
                     }"
                     class="efficient-carousel-item"
                 >
-                    <slot :item="item" :index="index" />
+                    <slot
+                        v-if="isValidIndex(index)"
+                        :item="item"
+                        :index="index"
+                    />
                 </div>
             </div>
         </translate-scroll>
@@ -108,6 +112,11 @@
             marginError: {
                 type: Number,
                 default: 0,
+            },
+
+            wrap: {
+                type: Boolean,
+                default: true,
             },
         },
 
@@ -456,6 +465,21 @@
             },
 
             /**
+             * Check if an item index is valid
+             *
+             * @param {Number} index
+             *
+             * @returns {Boolean}
+             */
+            isValidIndex(index) {
+                if (this.wrap) {
+                    return true;
+                }
+
+                return index >= 0 && index < this.items.length;
+            },
+
+            /**
              * Move the scroll position based on the distance the touch event
              * moved
              *
@@ -467,7 +491,15 @@
                 }
 
                 const currentTouchPosition = this.getTouchPosition(e);
-                const distanceX = currentTouchPosition.x - this.initialTouchPosition.x;
+                let distanceX = currentTouchPosition.x - this.initialTouchPosition.x;
+
+                if (!this.isValidIndex(this.rawIndex - 1)) {
+                    distanceX = Math.min(0, distanceX);
+                }
+
+                if (!this.isValidIndex(this.rawIndex + 1)) {
+                    distanceX = Math.max(0, distanceX);
+                }
 
                 if (!this.panning) {
                     const distanceXAbs = Math.abs(distanceX);

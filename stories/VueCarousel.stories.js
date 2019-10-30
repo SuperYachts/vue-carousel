@@ -31,6 +31,7 @@ storiesOf('VueCarousel', module)
                         :number-in-view="numberInView"
                         :center="center"
                         :value="value"
+                        :wrap="wrap"
                         @input="input"
                     >
                         <template v-slot="{ item }">
@@ -59,6 +60,11 @@ storiesOf('VueCarousel', module)
             value: {
                 type: Number,
                 default: number('Value', 0),
+            },
+
+            wrap: {
+                type: Boolean,
+                default: boolean('Wrap', false),
             },
 
             items: {
