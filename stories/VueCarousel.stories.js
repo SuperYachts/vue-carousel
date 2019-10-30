@@ -37,8 +37,6 @@ storiesOf('VueCarousel', module)
                         <template v-slot="{ item }">
                             <test-item @click.native="click(item)">
                                 {{ item }}
-
-                                <img :src="image" />
                             </test-item>
                         </template>
                     </vue-carousel>

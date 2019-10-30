@@ -493,12 +493,16 @@
                 const currentTouchPosition = this.getTouchPosition(e);
                 let distanceX = currentTouchPosition.x - this.initialTouchPosition.x;
 
-                if (!this.isValidIndex(this.rawIndex - 1)) {
-                    distanceX = Math.min(0, distanceX);
+                if (!this.isValidIndex(this.index - 1)) {
+                    if (distanceX > 0) {
+                        return;
+                    }
                 }
 
-                if (!this.isValidIndex(this.rawIndex + 1)) {
-                    distanceX = Math.max(0, distanceX);
+                if (!this.isValidIndex(this.rawIndex + this.numberInView)) {
+                    if (distanceX < 0) {
+                        return;
+                    }
                 }
 
                 if (!this.panning) {
