@@ -156,7 +156,9 @@
                  * @returns {Number}
                  */
                 get() {
-                    return this.itemCount * (this.itemScroll / this.totalWidth);
+                    const roundToDigits = 100;
+
+                    return Math.round(roundToDigits * this.itemCount * (this.itemScroll / this.totalWidth)) / roundToDigits;
                 },
 
                 /**
@@ -166,7 +168,6 @@
                  */
                 set(value) {
                     this.itemScroll = this.totalWidth * (value / this.itemCount);
-                    this.$emit('index', this.index);
                 },
             },
 
@@ -491,7 +492,7 @@
                 }
 
                 const currentTouchPosition = this.getTouchPosition(e);
-                let distanceX = currentTouchPosition.x - this.initialTouchPosition.x;
+                const distanceX = currentTouchPosition.x - this.initialTouchPosition.x;
 
                 if (!this.isValidIndex(this.index - 1)) {
                     if (distanceX > 0) {
